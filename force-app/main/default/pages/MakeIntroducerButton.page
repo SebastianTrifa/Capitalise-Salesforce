@@ -1,0 +1,49 @@
+<apex:page standardController="Account" extensions="MakeIntroducerButton" action="{!IntroducerButton}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system.css')}" />
+
+<style>
+    .msgIcon {
+    display: none!important
+    }
+    .customMessage * {
+    color: #fff!important
+    }
+    .customMessage {
+    margin: 5px 0!important;
+    max-width: 1280px;
+    opacity: 1!important;
+    width: 100%;
+    font-size: 20px;
+    border: 0px;
+    padding-left: 10px;
+    }
+    .message {
+    opacity: .1
+    }
+</style>
+
+
+<script>
+    $(document).ready(function(){
+    overridePageMessages();
+    });
+
+    function overridePageMessages(){
+    var textureEffect = '';
+    //Uncomment below line for texture effect on page messages
+    textureEffect = 'slds-theme--alert-texture';
+
+    $('.warningM3').addClass('slds-notify slds-notify--toast slds-theme--warning customMessage '+textureEffect);
+    $('.confirmM3').addClass('slds-notify slds-notify--alert slds-theme--success  customMessage '+textureEffect);
+    $('.errorM3').addClass('slds-notify slds-notify--alert slds-theme--error customMessage '+textureEffect);
+    $('.infoM3').addClass('slds-notify slds-notify--toast customMessage '+textureEffect);
+
+    $('.errorM3').removeClass('errorM3');
+    $('.confirmM3').removeClass('confirmM3');
+    $('.infoM3').removeClass('infoM3');
+    $('.warningM3').removeClass('warningM3');
+    }
+</script>
+    <apex:pageMessages />
+</apex:page>

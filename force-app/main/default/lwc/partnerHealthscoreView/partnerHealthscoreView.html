@@ -1,0 +1,80 @@
+<template>
+    <template if:true={partner}>
+        <lightning-card>
+            <h3 slot="title">
+                <lightning-icon icon-name="custom:custom1" size="small"></lightning-icon>
+                <span>HealthScore </span>
+                <template if:true={partnerHealthy}>
+                    <span><lightning-formatted-number value={partnerHealthscore} format-style="percent" maximum-fraction-digits="2" class="healthy"></lightning-formatted-number></span>
+                </template>
+                <template if:false={partnerHealthy}>
+                    <template if:true={partnerWeak}>
+                        <span><lightning-formatted-number value={partnerHealthscore} format-style="percent" maximum-fraction-digits="2" class="sick"></lightning-formatted-number></span>
+                    </template>
+                    <template if:false={partnerWeak}>
+                        <span><lightning-formatted-number value={partnerHealthscore} format-style="percent" maximum-fraction-digits="2" class="worrying"></lightning-formatted-number></span>
+                    </template>
+                </template>
+            </h3>
+            <c-chart type="radar">
+                <c-dataset labels='["Attachment","Conversion Rate","Engagement","Monetary Secured","Monetary Unsecured","Penetration","Recency","Spread"]'>
+                    <template if:true={partnerHealthy}>
+                        <c-data label={partnerName} detail={partnerRadar} backgroundcolor="rgba(0, 255, 0, 0.3)" bordercolor="rgba(0, 255, 0, 1)"></c-data>
+                    </template>
+                    <template if:false={partnerHealthy}>
+                        <template if:true={partnerWeak}>
+                            <c-data label={partnerName} detail={partnerRadar} backgroundcolor="rgba(255, 0, 0, 0.3)" bordercolor="rgba(255, 0, 0, 1)"></c-data>
+                        </template>
+                        <template if:false={partnerWeak}>
+                            <c-data label={partnerName} detail={partnerRadar} backgroundcolor="rgba(161, 161, 66, 0.3)" bordercolor="rgba(161, 161, 66, 1)"></c-data>
+                        </template>
+                    </template>
+                </c-dataset>
+                <c-title text="Healthscore Key Indicators"></c-title>
+                <c-radial-linear-axis tick-min=1 tick-max=5 gridline-color="rgba(0, 0, 0, 0.7)" gridline-zerolinecolor="rgba(0, 0, 0, 0.7)"></c-radial-linear-axis>
+            </c-chart>
+
+            <div class="c-container" slot="footer">
+                <div>
+                    <span class="label">Attachment:</span>
+                    <span>{partnerAttachment}</span>
+                </div>
+                <div>
+                    <span class="label">Conversion Rate:</span>
+                    <span>{partnerConversionRate}</span>
+                </div>
+                <div>
+                    <span class="label">Engagement:</span>
+                    <span>{partnerEngagement}</span>
+                </div>
+                <div>
+                    <span class="label">Penetration:</span>
+                    <span>{partnerPenetration}</span>
+                </div>
+                <div>
+                    <span class="label">Recency:</span>
+                    <span>{partnerRecency}</span>
+                </div>
+                <div>
+                    <span class="label">Spread:</span>
+                    <span>{partnerSpread}</span>
+                </div>
+                <div>
+                    <span class="label">Secured Monetary:</span>
+                    <span>{partnerSecuredMonetary}</span>
+                </div>
+                <div>
+                    <span class="label">Unsecured Monetary:</span>
+                    <span>{partnerUnsecuredMonetary}</span>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+    <template if:false={partner}>
+        <div>
+            <p>
+                Error loading record ({recordId}): {error}!
+            </p>
+        </div>
+    </template>
+</template>

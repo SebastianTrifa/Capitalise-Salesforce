@@ -1,0 +1,10 @@
+<template>
+    <lightning-card if:true={visible} title="Declined Checklist" icon-name="action:approval" variant="narrow">
+        <lightning-record-view-form object-api-name={checklistApiName} record-id={checklistID}>
+            <lightning-output-field field-name={notesAddedField}></lightning-output-field>
+            <lightning-output-field field-name={notesReceivedField}></lightning-output-field>
+            <lightning-output-field field-name={callLoggedField}></lightning-output-field>
+            <lightning-output-field field-name={emailLoggedField}></lightning-output-field>
+        </lightning-record-view-form>
+    </lightning-card>
+</template>

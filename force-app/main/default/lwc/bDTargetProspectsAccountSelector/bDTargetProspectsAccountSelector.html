@@ -1,0 +1,109 @@
+<template>
+    <lightning-card title="BD Target Prospect List">
+        <div class="slds-m-around_medium">
+            <lightning-layout horizontal-align="space">
+                <lightning-layout-item flexibility="auto">
+                    <template if:true={owners}>
+                            <lightning-combobox name="ownerPick" label="Pick Owner" placeholder="Choose Owner" value={selectedOwner}
+                            onchange={handleOwnerSelected} options={options} required></lightning-combobox>
+                    </template>
+                    <template if:false={owners}>
+                        <lightning-combobox name="ownerPickDisabled" label="Pick Owner" placeholder="Choose Owner" value=""
+                        onchange={handleOwnerSelected} options={options} disabled></lightning-combobox>
+                    </template>
+                </lightning-layout-item>
+                <lightning-layout-item flexibility="auto">
+                    <lightning-input type="date" name="datePicker" label="Pick a Close Date" required value="" onchange={handleDatePicked}></lightning-input>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+        
+        <div class="slds-m-around_medium">
+            <template if:true={accounts}>
+                <div class="slds-scrollable">
+                    <template if:true={isLoading}>
+                        <lightning-spinner alternative-text="Loading" size="medium" variant="brand"></lightning-spinner>
+                    </template>
+                    <lightning-datatable key-field="id" columns={columns} data={viewSlice} 
+                    sorted-by={sortBy} sorted-direction={sortDirection} onsort={sortColumns}
+                    onrowselection={rowSelection}></lightning-datatable>
+                </div>
+                </br>
+                <lightning-layout horizontal-align="space">
+                    <lightning-layout-item flexibility="auto">
+                        <lightning-button label="Previous" icon-name="utility:chevronleft" onclick={prevNavHandler} disabled={displayPrevious}></lightning-button>
+                    </lightning-layout-item>
+                    <lightning-layout-item flexibility="auto">
+                        Page {page} of {totalPage}
+                    </lightning-layout-item>
+                    <lightning-layout-item flexibility="auto">
+                        <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={nextNavHandler} disabled={displayNext}></lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+        </div>
+        <c-modal-validation-b-d-team-prospects title="Confirmation Required" message={confirmationMessage}
+        confirm-label="Yes" cancel-label="No" visible={dialogVisible} name="confirmModal" onclosemodalclick={handleModal}></c-modal-validation-b-d-team-prospects>
+        <lightning-accordion>
+            <lightning-accordion-section name="filters_accordion" label="Filters">
+                <div class="slds-m-around_medium">
+                    <lightning-layout horizontal-align="space">
+                        <lightning-layout-item flexibility="auto">
+                            <lightning-combobox name="countryFilterOptionPick" label="Country Filter" placeholder="Choose Filter Bind" value={countryFilterOption}
+                            onchange={handleCountryFilterOptionChanged} options={countryFilterOptions}></lightning-combobox>    
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+                <div class="slds-m-around_medium">
+                    <lightning-layout horizontal-align="space">
+                        <lightning-layout-item flexibility="auto">
+                            <lightning-combobox name="zoneFilterOptionPick" label="Zone Filter" placeholder="Choose Filter Bind" value={zoneFilterOption}
+                            onchange={handleZoneFilterOptionChanged} options={filterOptions}></lightning-combobox>    
+                        </lightning-layout-item>
+                        <lightning-layout-item flexibility="auto">
+                            <lightning-input type="number" name="zonePicker" label="Pick a Zone value" value="" onchange={handleZoneFilterPicked}></lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+                <div class="slds-m-around_medium">
+                    <lightning-layout horizontal-align="space">
+                        <lightning-layout-item flexibility="auto">
+                            <lightning-combobox name="nbPartnersFilterOptionPick" label="Number of Partner Filter" placeholder="Choose Filter Bind" value={nbPartnersFilterOption}
+                            onchange={handleNbPartnersFilterOptionChanged} options={filterOptions} ></lightning-combobox>    
+                        </lightning-layout-item>
+                        <lightning-layout-item flexibility="auto">
+                            <lightning-input type="number" name="nbPartnersPicker" label="Number of Partner" value="" onchange={handleNbPartnersFilterPicked}></lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+                <div class="slds-m-around_medium">
+                    <lightning-layout horizontal-align="space">
+                        <lightning-layout-item flexibility="auto">
+                            <lightning-combobox name="nbStaffFilterOptionPick" label="Number of Staff Filter" placeholder="Choose Filter Bind" value={nbStaffFilterOption}
+                            onchange={handleNbStaffFilterOptionChanged} options={filterOptions} required></lightning-combobox>    
+                        </lightning-layout-item>
+                        <lightning-layout-item flexibility="auto">
+                            <lightning-input type="number" name="nbStaffPicker" label="Number of Staff" onchange={handleNbStaffFilterPicked}></lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </lightning-accordion-section>
+        </lightning-accordion>
+        
+        <div slot="footer">
+            <lightning-layout horizontal-align="space">
+                <lightning-layout-item flexibility="auto">
+                    {selectedCount} rows selected!
+                </lightning-layout-item>
+                <lightning-layout-item flexibility="auto">
+                    <lightning-button variant="brand" name="createOpportunities" label="Create Opportunities" title="Create Opportunities" onclick={createOpportunities} disabled={showCreateOpportunities}></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+        <!-- <div class="slds-m-around_medium">
+            <template if:true={opportunities}>
+                <lightning-datatable key-field="id" columns={oppsColumns} data={opportunities}></lightning-datatable>
+            </template>
+        </div> -->
+    </lightning-card> 
+</template>

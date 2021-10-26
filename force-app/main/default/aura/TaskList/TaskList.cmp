@@ -1,0 +1,30 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" controller="TaskListController" >
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="Resultlist" type="ResultWrapper[]"/>
+    <aura:attribute name="ListColumns" type="List" access="public" />
+  <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+  
+      <ldt:datatableDev aura:id="ConTable" 
+        dataRows="{!v.Resultlist}" 
+        header="{!v.ListColumns}"
+        />
+        <!--table class="slds-table slds-table_bordered slds-table_cell-buffer">
+        <thead>
+            <tr class="slds-text-title_caps">
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+            </tr>
+          </thead>
+        <tbody>
+          <aura:iteration items="{!v.Resultlist}" var="result">
+              <tr scope="row">
+                  <td> {!result.ResultId}</td>
+                  <td> {!result.ResultName}</td>
+                  <td> {!result.ResultType}</td>
+              </tr>
+          </aura:iteration>
+        </tbody>
+      </table-->
+  
+</aura:component>
