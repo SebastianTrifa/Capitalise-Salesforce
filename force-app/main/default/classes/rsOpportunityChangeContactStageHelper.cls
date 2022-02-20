@@ -47,7 +47,7 @@ public with sharing class rsOpportunityChangeContactStageHelper {
             }
             when BEFORE_INSERT {
                 // Processing for before insert an Opportunity
-                opportunitySubscriptionFieldsValidationRule(newList);
+                //opportunitySubscriptionFieldsValidationRule(newList);
                 setCloseDateAndOwner(newList);
                 List<Opportunity> funding_searches = new List<Opportunity>();
                 Id invoiceFinanceRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Invoice Finance').getRecordTypeId();
@@ -65,7 +65,7 @@ public with sharing class rsOpportunityChangeContactStageHelper {
             }
             when BEFORE_UPDATE {
                 // Processing for before update an Opportunity
-                opportunitySubscriptionFieldsValidationRule(newList);
+                //opportunitySubscriptionFieldsValidationRule(newList);
                 setCloseDateAndOwner(newList);
                 paidOutOpportunityChange(newList, oldMap);
                 CanceledOpportunityReasonFinder(newList, oldMap);
@@ -81,7 +81,7 @@ public with sharing class rsOpportunityChangeContactStageHelper {
 
     /**
      * @description Helper method to validate is required fields are filled when an Opportunity is Closed Won
-     */
+     
     public static void opportunitySubscriptionFieldsValidationRule(List < Opportunity > newList) {
 
         Map < Id, Schema.RecordTypeInfo > opportunityRecordTypeByIdMap = Schema.SObjectType.Opportunity.getRecordTypeInfosById();
@@ -96,7 +96,7 @@ public with sharing class rsOpportunityChangeContactStageHelper {
             }
         }
 
-    }
+    }*/
 
     /**
      * @description Helper method to set Opportunity Owner as Introducer Owner when an Opportunity is Inserted

@@ -102,6 +102,50 @@ global class AccountHealthScoreSorter implements Comparable {
                     result = 1;
                 }
             }
+            when 'Lender Conversion' {
+                if(acc.Lender_Conversion_Key__c > anteWrapped.acc.Lender_Conversion_Key__c) {
+                    result = 1;
+                } else if (acc.Lender_Conversion_Key__c < anteWrapped.acc.Lender_Conversion_Key__c) {
+                    result = -1;
+                } else if((acc.Lender_Conversion_Key__c == null) && (anteWrapped.acc.Lender_Conversion_Key__c != null)) {
+                    result = -1;
+                } else if((acc.Lender_Conversion_Key__c != null) && (anteWrapped.acc.Lender_Conversion_Key__c == null)) {
+                    result = 1;
+                }
+            }
+            when 'Lender Monetary' {
+                if(acc.Lender_Monetary_Key__c > anteWrapped.acc.Lender_Monetary_Key__c) {
+                    result = 1;
+                } else if (acc.Lender_Monetary_Key__c < anteWrapped.acc.Lender_Monetary_Key__c) {
+                    result = -1;
+                } else if((acc.Lender_Monetary_Key__c == null) && (anteWrapped.acc.Lender_Monetary_Key__c != null)) {
+                    result = -1;
+                } else if((acc.Lender_Monetary_Key__c != null) && (anteWrapped.acc.Lender_Monetary_Key__c == null)) {
+                    result = 1;
+                }
+            }
+            when 'Active Contract' {
+                if(acc.Active_Contacts_Key__c > anteWrapped.acc.Active_Contacts_Key__c) {
+                    result = 1;
+                } else if (acc.Active_Contacts_Key__c < anteWrapped.acc.Active_Contacts_Key__c) {
+                    result = -1;
+                } else if((acc.Active_Contacts_Key__c == null) && (anteWrapped.acc.Active_Contacts_Key__c != null)) {
+                    result = -1;
+                } else if((acc.Active_Contacts_Key__c != null) && (anteWrapped.acc.Active_Contacts_Key__c == null)) {
+                    result = 1;
+                }
+            }
+            when 'Feedback {
+                if(acc.Last_Quarterly_Meeting__c > anteWrapped.acc.Last_Quarterly_Meeting__c) {
+                    result = 1;
+                } else if (acc.Last_Quarterly_Meeting__c < anteWrapped.acc.Last_Quarterly_Meeting__c) {
+                    result = -1;
+                } else if((acc.Last_Quarterly_Meeting__c == null) && (anteWrapped.acc.Last_Quarterly_Meeting__c != null)) {
+                    result = -1;
+                } else if((acc.Last_Quarterly_Meeting__c != null) && (anteWrapped.acc.Last_Quarterly_Meeting__c == null)) {
+                    result = 1;
+                }
+            }
         }
 
         return result;

@@ -33,15 +33,23 @@ private class AccountTriggerHandlerTests {
     @isTest static void testUpdateAccountMembershipNull()
     {
         Id introducerRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Introducer').getRecordTypeId();
+        Id foundationRecordTypeId = Schema.SObjectType.Risk__c.getRecordTypeInfosByName().get('Foundation').getRecordTypeId();
         Account acc = new Account(Name='Temp Test', RecordTypeId=introducerRecordTypeId);
 
         insert acc;
+        
+        Risk__c risk = new Risk__c(Name='Test Risk', Stage__c='Identified', Priority__c='Medium', Customer__c=acc.id, RecordTypeId=foundationRecordTypeId,
+                                    Open_Reason__c='New Business');
 
+        insert risk;
+        
         Account acc_refreshed = [select Id, RecordTypeId, Membership_Level__c from Account where Id=:acc.Id];
 
         acc_refreshed.Membership_Level__c = null;
-
+        
+        //Test.startTest();
         try{
+            //Expected_Time_in_Stage__mdt ets = Expected_Time_in_Stage__mdt.getInstance('Foundation');
             update acc_refreshed;
             System.AssertEquals(true, false);
         }
@@ -49,5 +57,6 @@ private class AccountTriggerHandlerTests {
         {
             System.Assert(e.getMessage().contains('Membership Level cannot be null or blank for Introducer accounts'));
         }
+        //Test.stopTest();
     }
 }

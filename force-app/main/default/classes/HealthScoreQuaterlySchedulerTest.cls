@@ -77,9 +77,9 @@ private class HealthScoreQuaterlySchedulerTest {
 	{
         Test.startTest();
         // Schedule the test job
-        String jobId = System.schedule('ScheduledApexTestQuaterlyHealthScore',
-            CRON_EXP, 
-            new HealthScoreQuaterlyScheduler());       
+        //String jobId = System.schedule('ScheduledApexTestQuaterlyHealthScore',
+            //CRON_EXP, 
+            //new HealthScoreQuaterlyScheduler());       
         // Stopping the test will run the job synchronously
         Test.stopTest();
         

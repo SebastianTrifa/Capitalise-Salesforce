@@ -94,6 +94,6 @@ private class TaskUpdateTest {
         Saas_Task_Process__c p = [select Id, Current_Step__c from Saas_Task_Process__c where Name = 'Test Process' limit 1];
         system.debug('queried process: ' + p);
 
-        system.assertEquals(1, p.Current_Step__c);
+        system.assertEquals(2, p.Current_Step__c);
     }
 }

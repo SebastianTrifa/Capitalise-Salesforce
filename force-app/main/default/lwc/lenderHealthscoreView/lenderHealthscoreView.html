@@ -1,0 +1,68 @@
+<template>
+    <template if:true={lender}>
+        <lightning-card>
+            <h3 slot="title">
+                <lightning-icon icon-name="custom:custom1" size="small"></lightning-icon>
+                <span>HealthScore </span>
+                <template if:true={lenderHealthy}>
+                    <span><lightning-formatted-number value={lenderHealthscore} format-style="percent" maximum-fraction-digits="2" class="healthy"></lightning-formatted-number></span>
+                </template>
+                <template if:false={lenderHealthy}>
+                    <template if:true={lenderWeak}>
+                        <span><lightning-formatted-number value={lenderHealthscore} format-style="percent" maximum-fraction-digits="2" class="sick"></lightning-formatted-number></span>
+                    </template>
+                    <template if:false={lenderWeak}>
+                        <span><lightning-formatted-number value={lenderHealthscore} format-style="percent" maximum-fraction-digits="2" class="worrying"></lightning-formatted-number></span>
+                    </template>
+                </template>
+            </h3>
+            <c-chart type="radar">
+                <c-dataset labels='["Lender Conversion","Lender Monetary","Active Contacts","Platform Use","Feedback"]'>
+                    <template if:true={lenderHealthy}>
+                        <c-data label={lenderName} detail={lenderRadar} backgroundcolor="rgba(0, 255, 0, 0.3)" bordercolor="rgba(0, 255, 0, 1)"></c-data>
+                    </template>
+                    <template if:false={lenderHealthy}>
+                        <template if:true={lenderWeak}>
+                            <c-data label={lenderName} detail={lenderRadar} backgroundcolor="rgba(255, 0, 0, 0.3)" bordercolor="rgba(255, 0, 0, 1)"></c-data>
+                        </template>
+                        <template if:false={lenderWeak}>
+                            <c-data label={lenderName} detail={lenderRadar} backgroundcolor="rgba(161, 161, 66, 0.3)" bordercolor="rgba(161, 161, 66, 1)"></c-data>
+                        </template>
+                    </template>
+                </c-dataset>
+                <c-title text="Healthscore Key Indicators"></c-title>
+                <c-radial-linear-axis tick-min=1 tick-max=5 gridline-color="rgba(0, 0, 0, 0.7)" gridline-zerolinecolor="rgba(0, 0, 0, 0.7)"></c-radial-linear-axis>
+            </c-chart>
+
+            <div class="c-container" slot="footer">
+                <div>
+                    <span class="label">Lender Conversion:</span>
+                    <span>{lenderLenderConversion}</span>
+                </div>
+                <div>
+                    <span class="label">Lender Monetary:</span>
+                    <span>{lenderLenderMonetary}</span>
+                </div>
+                <div>
+                    <span class="label">Active Contacts:</span>
+                    <span>{lenderActiveContacts}</span>
+                </div>
+                <div>
+                    <span class="label">Platform Use:</span>
+                    <span>{lenderPlatformUse}</span>
+                </div>
+                <div>
+                    <span class="label">Feedback:</span>:</span>
+                    <span>{lenderFeedback}</span>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+    <template if:false={lender}>
+        <div>
+            <p>
+                Error loading record ({recordId}): {error}!
+            </p>
+        </div>
+    </template>
+</template>

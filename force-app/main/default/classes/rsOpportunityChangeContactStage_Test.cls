@@ -11,7 +11,7 @@ Developed by Rolling-Space, Braga (Portugal)
 @isTest
 private class rsOpportunityChangeContactStage_Test {
 
-	private class CapAPPMock_Success implements HttpCalloutMock {
+  private class CapAPPMock_Success implements HttpCalloutMock {
         public HTTPResponse respond(HTTPRequest req) {
             if (req.getEndpoint().startsWith('https://prod')) {
                 HTTPResponse res = new HTTPResponse();
@@ -29,305 +29,309 @@ private class rsOpportunityChangeContactStage_Test {
         }
     }
 
-	@TestSetup
-	static void Setup()
-	{
-		Id fundingSearchRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Funding Search').getRecordTypeId();
-		Id fundingSpecialistProfileId = [select Id from Profile where Name='Capitalise Funding Specialist'].Id;
-		
-		List<User> test_users = new List<User>();
-		User test_user1 = new User(LastName = 'TestUser',
-		FirstName='#1',
-		Alias = 'tusr1',
-		Email = 'test1@CapUAT.com',
-		Username = 'test1@CapUAT.com',
-		ProfileId = fundingSpecialistProfileId,
-		TimeZoneSidKey = 'GMT',
-		LanguageLocaleKey = 'en_US',
-		EmailEncodingKey = 'UTF-8',
-		LocaleSidKey = 'en_US');
-		test_users.add(test_user1);
+  @TestSetup
+  static void Setup()
+  {
+    Id fundingSearchRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Funding Search').getRecordTypeId();
+    Id fundingSpecialistProfileId = [select Id from Profile where Name='Capitalise Funding Specialist'].Id;
+    
+    List<User> test_users = new List<User>();
+    User test_user1 = new User(LastName = 'TestUser',
+    FirstName='#1',
+    Alias = 'tusr1',
+    Email = 'test1@CapUAT.com',
+    Username = 'test1@CapUAT.com',
+    ProfileId = fundingSpecialistProfileId,
+    TimeZoneSidKey = 'GMT',
+    LanguageLocaleKey = 'en_US',
+    EmailEncodingKey = 'UTF-8',
+    LocaleSidKey = 'en_US');
+    test_users.add(test_user1);
 
-		User test_user2 = new User(LastName = 'TestUser',
-		FirstName='#2',
-		Alias = 'tusr2',
-		Email = 'test2@CapUAT.com',
-		Username = 'test2@CapUAT.com',
-		ProfileId = fundingSpecialistProfileId,
-		TimeZoneSidKey = 'GMT',
-		LanguageLocaleKey = 'en_US',
-		EmailEncodingKey = 'UTF-8',
-		LocaleSidKey = 'en_US');
-		test_users.add(test_user2);
+    User test_user2 = new User(LastName = 'TestUser',
+    FirstName='#2',
+    Alias = 'tusr2',
+    Email = 'test2@CapUAT.com',
+    Username = 'test2@CapUAT.com',
+    ProfileId = fundingSpecialistProfileId,
+    TimeZoneSidKey = 'GMT',
+    LanguageLocaleKey = 'en_US',
+    EmailEncodingKey = 'UTF-8',
+    LocaleSidKey = 'en_US');
+    test_users.add(test_user2);
 
-		insert test_users;
+    insert test_users;
 
-		List<Contact> intro_contacts = new List<Contact>();
-		Introducer__c intro = new Introducer__c();
-		intro.name = 'Introducer Test';
-		insert intro;
+    List<Contact> intro_contacts = new List<Contact>();
+    Introducer__c intro = new Introducer__c();
+    intro.name = 'Introducer Test';
+    insert intro;
 
-		List<Account> test_businesses = new List<Account>();
+    List<Account> test_businesses = new List<Account>();
 
-		for(Integer idx = 0; idx < 6; idx++)
-		{
-			Account acc = new Account();
-			acc.Name = 'Business T#' + idx;
-			test_businesses.add(acc);
-		}
+    for(Integer idx = 0; idx < 6; idx++)
+    {
+      Account acc = new Account();
+      acc.Name = 'Business T#' + idx;
+      test_businesses.add(acc);
+    }
 
-		Account cap = new Account(Name='Capitalise');
-		test_businesses.add(cap);
-		insert test_businesses;
+    Account cap = new Account(Name='Capitalise');
+    test_businesses.add(cap);
+    insert test_businesses;
 
-		contact con = new contact();
-		con.LastName = 'test contact';
-		con.Introducer__c = intro.id;
-		intro_contacts.add(con);
+    contact con = new contact();
+    con.LastName = 'test contact';
+    con.Introducer__c = intro.id;
+    intro_contacts.add(con);
 
-		contact con1 = new contact();
-		con1.LastName = 'test contact 1';
-		con1.Introducer__c = intro.id;
-		intro_contacts.add(con1);
+    contact con1 = new contact();
+    con1.LastName = 'test contact 1';
+    con1.Introducer__c = intro.id;
+    intro_contacts.add(con1);
 
-		insert intro_contacts;
+    insert intro_contacts;
 
-		List<User> funding_specialists = [select Id, Name from User where ProfileId=:fundingSpecialistProfileId limit 2];
-		List<Account> test_introducers = new List<Account>();
+    List<User> funding_specialists = [select Id, Name from User where ProfileId=:fundingSpecialistProfileId limit 2];
+    List<Account> test_introducers = new List<Account>();
 
-		for(Integer idx = 0; idx < 6; idx++)
-		{
-			Account acc = new Account();
-			acc.Name = 'Introducer T#' + idx;
-			test_introducers.add(acc);
-		}
-		insert test_introducers;
+    for(Integer idx = 0; idx < 6; idx++)
+    {
+      Account acc = new Account();
+      acc.Name = 'Introducer T#' + idx;
+      test_introducers.add(acc);
+    }
+    insert test_introducers;
 
-		List<Opportunity> previous_searches = new List<Opportunity>();
+    List<Opportunity> previous_searches = new List<Opportunity>();
 
-		for(Integer idx = 0; idx < 5; idx++)
-		{
-			opportunity opp = new opportunity();
-			opp.Introducer__c = intro.id;
-			opp.AccountId = test_businesses[idx].Id;
-			opp.Introducer_new__c = test_introducers[idx].Id;
-			opp.Introducer_contact__c = intro_contacts[math.mod(idx, 2)].Id;
-			opp.closedate = system.today() + 7;
-			opp.name = 'test search prev#' + idx;
-			opp.RecordTypeId = fundingSearchRecordTypeId;
-			opp.stagename = 'Incomplete';
-			opp.Owner_Locked__c = false;
-			opp.SearchedAmount__c = 250000;
-			opp.Funding_Specialist__c = funding_specialists[math.mod(idx,2)].Id;
-			previous_searches.add(opp);
-		}
+    for(Integer idx = 0; idx < 5; idx++)
+    {
+      opportunity opp = new opportunity();
+      opp.Introducer__c = intro.id;
+      opp.AccountId = test_businesses[idx].Id;
+      opp.Introducer_new__c = test_introducers[idx].Id;
+      opp.Introducer_contact__c = intro_contacts[math.mod(idx, 2)].Id;
+      opp.closedate = system.today() + 7;
+      opp.name = 'test search prev#' + idx;
+      opp.RecordTypeId = fundingSearchRecordTypeId;
+      opp.stagename = 'Incomplete';
+      opp.Owner_Locked__c = false;
+      opp.SearchedAmount__c = 250000;
+      opp.Funding_Specialist__c = funding_specialists[math.mod(idx,2)].Id;
+      previous_searches.add(opp);
+    }
 
-		insert previous_searches;
-	}
+    insert previous_searches;
+  }
 
-	@isTest static void test_method_one() {
-		// Implement test code
+  @isTest static void test_method_one() {
+    // Implement test code
 
-		Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
-		Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
-		Introducer__c intro = [select Id, Name from Introducer__c where Name = 'Introducer Test' limit 1];
-		
-		test.startTest();
-		Test.setMock(HttpCalloutMock.class, new CapAPPMock_Success());
-		opportunity opp = new opportunity();
-		opp.Introducer__c = intro.id;
-		opp.Introducer_contact__c = con.id;
-		opp.closedate = system.today();
-		opp.name = 'test';
-		opp.stagename = 'Pending';
-		insert opp;
+    Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
+    Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
+    Introducer__c intro = [select Id, Name from Introducer__c where Name = 'Introducer Test' limit 1];
+    Id fundingSpecialistProfileId = [select Id from Profile where Name='Capitalise Funding Specialist'].Id;
+    List<User> funding_specialists = [select Id, Name from User where ProfileId=:fundingSpecialistProfileId limit 2];
+    
+    test.startTest();
+    Test.setMock(HttpCalloutMock.class, new CapAPPMock_Success());
+    opportunity opp = new opportunity();
+    opp.Introducer__c = intro.id;
+    opp.Introducer_contact__c = con.id;
+    opp.closedate = system.today();
+    opp.name = 'test';
+    opp.stagename = 'Pending';
+    opp.Funding_Specialist__c = funding_specialists[0].Id;
+    insert opp;
 
-		opp.stagename = 'Paid Out';
-		update opp;
+    opp.stagename = 'Paid Out';
+    opp.Funding_Specialist__c = funding_specialists[1].Id;
+    update opp;
 
-		/*opportunity opp = new opportunity();
-		opp.Introducer__c = intro.id;
-		opp.Introducer_contact__c = con.id;
-		opp.closedate = system.today();
-		opp.name = 'test';
-		opp.stagename = 'Pending';
-		insert opp;
+    /*opportunity opp = new opportunity();
+    opp.Introducer__c = intro.id;
+    opp.Introducer_contact__c = con.id;
+    opp.closedate = system.today();
+    opp.name = 'test';
+    opp.stagename = 'Pending';
+    insert opp;
 
-		delete opp;*/
+    delete opp;*/
         delete opp;
 
-		/*opportunity opp2 = new opportunity();
-		opp2.Introducer__c = intro.id;
-		opp2.Introducer_contact__c = con.id;
-		opp2.business_contact__c = con.id;
-		opp2.closedate = system.today();
-		opp2.name = 'test';
-		opp2.stagename = 'Paid Out';
-		insert opp2;*/
+    /*opportunity opp2 = new opportunity();
+    opp2.Introducer__c = intro.id;
+    opp2.Introducer_contact__c = con.id;
+    opp2.business_contact__c = con.id;
+    opp2.closedate = system.today();
+    opp2.name = 'test';
+    opp2.stagename = 'Paid Out';
+    insert opp2;*/
 
-		//opp2.has_invoice_finance__c = true;
-		//update opp2;
-		Test.stopTest();
+    //opp2.has_invoice_finance__c = true;
+    //update opp2;
+    Test.stopTest();
 
 
-	}
+  }
 
-	@isTest static void test_invoiceFinanceAssignment()
-	{
-		Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
-		Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
-		Account intro = [select Id, Name from Account where Name='Introducer T#5' limit 1];
-		Id invoiceFinanceRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Invoice Finance').getRecordTypeId();
-		
-		opportunity opp = new opportunity();
-		opp.AccountId = intro.Id;
-		opp.Introducer_new__c = intro.Id;
-		opp.Introducer_contact__c = con.Id;
-		opp.closedate = system.today() + 7;
-		opp.name = 'test IF Case';
-		opp.stagename = 'Incomplete';
-		opp.Owner_Locked__c = false;
-		opp.SearchedAmount__c = 250000;
-		insert opp;
+  @isTest static void test_invoiceFinanceAssignment()
+  {
+    Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
+    Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
+    Account intro = [select Id, Name from Account where Name='Introducer T#5' limit 1];
+    Id invoiceFinanceRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Invoice Finance').getRecordTypeId();
+    
+    opportunity opp = new opportunity();
+    opp.AccountId = intro.Id;
+    opp.Introducer_new__c = intro.Id;
+    opp.Introducer_contact__c = con.Id;
+    opp.closedate = system.today() + 7;
+    opp.name = 'test IF Case';
+    opp.stagename = 'Incomplete';
+    opp.Owner_Locked__c = false;
+    opp.SearchedAmount__c = 250000;
+    insert opp;
 
-		opp = [select Id, Name, RecordTypeId from Opportunity where Name='test IF Case' limit 1];
-		system.AssertEquals(opp.RecordTypeId, invoiceFinanceRecordTypeId);
-		
-	}
+    opp = [select Id, Name, RecordTypeId from Opportunity where Name='test IF Case' limit 1];
+    system.AssertEquals(opp.RecordTypeId, invoiceFinanceRecordTypeId);
+    
+  }
 
-	@isTest static void test_isFundingSearchSecured()
-	{
+  @isTest static void test_isFundingSearchSecured()
+  {
         Id fundingSearchRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Funding Search').getRecordTypeId();
 
-		Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
-		Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
-		Introducer__c intro = [select Id, Name from Introducer__c where Name = 'Introducer Test' limit 1];
+    Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
+    Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
+    Introducer__c intro = [select Id, Name from Introducer__c where Name = 'Introducer Test' limit 1];
 
-		List<Opportunity> funding_searches = new List<Opportunity>();
+    List<Opportunity> funding_searches = new List<Opportunity>();
 
-		for(Integer idx = 0; idx < 6; idx++)
-		{
-			opportunity opp = new opportunity();
-			opp.Introducer__c = intro.id;
-			opp.Introducer_contact__c = con.id;
-			opp.Business_Contact__c = con.id;
-			opp.closedate = system.today() + 7;
-			opp.name = 'test search #' + idx;
-			opp.RecordTypeId = fundingSearchRecordTypeId;
-			opp.stagename = 'Incomplete';
+    for(Integer idx = 0; idx < 6; idx++)
+    {
+      opportunity opp = new opportunity();
+      opp.Introducer__c = intro.id;
+      opp.Introducer_contact__c = con.id;
+      opp.Business_Contact__c = con.id;
+      opp.closedate = system.today() + 7;
+      opp.name = 'test search #' + idx;
+      opp.RecordTypeId = fundingSearchRecordTypeId;
+      opp.stagename = 'Incomplete';
 
-			switch on idx{
-				when 0 {
-					opp.SearchedAmount__c = 550000;
-				}
-				when 1 {
-					opp.SearchedAmount__c = 250000;
-					opp.Asset_Types__c = 'Transportation, Business';
-				}
-				when 2 {
-					opp.SearchedAmount__c = 350000;
-					opp.Asset_Types__c = 'Transportation, Stock';
-				}
-				when 3 {
-					opp.SearchedAmount__c = 350000;
-				}
-				when 4 {
-					opp.SearchedAmount__c = 250000;
-				}
-				when 5 {
-					opp.SearchedAmount__c = 250000;
-					opp.Name += ' PF';
-				}
-			}
+      switch on idx{
+        when 0 {
+          opp.SearchedAmount__c = 550000;
+        }
+        when 1 {
+          opp.SearchedAmount__c = 250000;
+          opp.Asset_Types__c = 'Transportation, Business';
+        }
+        when 2 {
+          opp.SearchedAmount__c = 350000;
+          opp.Asset_Types__c = 'Transportation, Stock';
+        }
+        when 3 {
+          opp.SearchedAmount__c = 350000;
+        }
+        when 4 {
+          opp.SearchedAmount__c = 250000;
+        }
+        when 5 {
+          opp.SearchedAmount__c = 250000;
+          opp.Name += ' PF';
+        }
+      }
 
-			funding_searches.add(opp);
-		}
+      funding_searches.add(opp);
+    }
 
-		Test.startTest();
-		Test.setMock(HttpCalloutMock.class, new CapAPPMock_Success());
-		insert funding_searches;
-		Test.stopTest();
-		Integer secured = 0, unsecured = 0;
-		List<Id> opp_ids = new List<Id>();
-		for(Opportunity opp : funding_searches)
-			opp_ids.add(opp.Id);
+    Test.startTest();
+    Test.setMock(HttpCalloutMock.class, new CapAPPMock_Success());
+    insert funding_searches;
+    Test.stopTest();
+    Integer secured = 0, unsecured = 0;
+    List<Id> opp_ids = new List<Id>();
+    for(Opportunity opp : funding_searches)
+      opp_ids.add(opp.Id);
 
-		for(Opportunity opp : [select Id, SearchedAmount__c, Name, Secured__c from Opportunity where Id In :opp_ids])
-		{
-			system.debug(opp);
-			if(opp.Secured__c) secured++;
-			else unsecured++;
-		}
-		system.AssertEquals(secured, 3);
-		system.AssertEquals(unsecured, 3);
-	}
+    for(Opportunity opp : [select Id, SearchedAmount__c, Name, Secured__c from Opportunity where Id In :opp_ids])
+    {
+      system.debug(opp);
+      if(opp.Secured__c) secured++;
+      else unsecured++;
+    }
+    system.AssertEquals(secured, 3);
+    system.AssertEquals(unsecured, 3);
+  }
 
-	@isTest static void test_subscriptions()
-	{
-		Id subscriptionRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Subscription').getRecordTypeId();
-		Id fundingSearchRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Funding Search').getRecordTypeId();
-		Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
-		Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
-		Introducer__c intro = [select Id, Name from Introducer__c where Name = 'Introducer Test' limit 1];
-		Account intro_acc = [select Id, Name from Account where Name='Introducer T#5' limit 1];
-		List<Opportunity> opps = new List<Opportunity>();
+  @isTest static void test_subscriptions()
+  {
+    Id subscriptionRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Subscription').getRecordTypeId();
+    Id fundingSearchRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Funding Search').getRecordTypeId();
+    Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
+    Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
+    Introducer__c intro = [select Id, Name from Introducer__c where Name = 'Introducer Test' limit 1];
+    Account intro_acc = [select Id, Name from Account where Name='Introducer T#5' limit 1];
+    List<Opportunity> opps = new List<Opportunity>();
 
-		for(Integer idx = 0; idx < 2; idx++)
-		{
-			opportunity opp = new opportunity();
-			opp.Introducer__c = intro.id;
-			opp.Introducer_new__c = intro_acc.Id;
-			opp.Introducer_contact__c = con.id;
-			opp.First_SaaS_Meeting__c = system.today() + 7;
-			opp.Number_of_Clients__c = 25;
-			opp.closedate = system.today() + 7;
-			opp.Business_Goals__c = 'Build a new revenue stream';
-			opp.name = 'Subscription test';
-			opp.Confirmed_Commission_Ex_VAT__c = 37.5;
-			if(math.mod(idx, 2) == 0) opp.StageName = 'Paid Out';
-			else opp.StageName = 'Closed Won';
-			opp.SearchedAmount__c = 60000;
-			opp.RecordTypeId = subscriptionRecordTypeId;
-			opp.Type = 'New Business';
-			opps.add(opp);
-		}
+    for(Integer idx = 0; idx < 2; idx++)
+    {
+      opportunity opp = new opportunity();
+      opp.Introducer__c = intro.id;
+      opp.Introducer_new__c = intro_acc.Id;
+      opp.Introducer_contact__c = con.id;
+      opp.First_SaaS_Meeting__c = system.today() + 7;
+      opp.Number_of_Clients__c = 25;
+      opp.closedate = system.today() + 7;
+      opp.Business_Goals__c = 'Build a new revenue stream';
+      opp.name = 'Subscription test';
+      opp.Confirmed_Commission_Ex_VAT__c = 37.5;
+      if(math.mod(idx, 2) == 0) opp.StageName = 'Paid Out';
+      else opp.StageName = 'Closed Won';
+      opp.SearchedAmount__c = 60000;
+      opp.RecordTypeId = subscriptionRecordTypeId;
+      opp.Type = 'New Business';
+      opps.add(opp);
+    }
 
-		for(Integer idx = 0; idx < 2; idx++)
-		{
-			opportunity opp = new opportunity();
-			opp.Introducer__c = intro.id;
-			opp.Introducer_new__c = intro_acc.Id;
-			opp.Introducer_contact__c = con.Id;
-			opp.closedate = system.today() + 7;
-			opp.name = 'test awaiting documents #' + idx;
-			opp.RecordTypeId = fundingSearchRecordTypeId;
-			opp.stagename = (math.mod(idx, 2) == 0) ? 'Awaiting Documents' : 'Incomplete';
-			opp.SearchedAmount__c = 250000;
-			opps.add(opp);
-		}
-		
-		insert opps;
-	}
+    for(Integer idx = 0; idx < 2; idx++)
+    {
+      opportunity opp = new opportunity();
+      opp.Introducer__c = intro.id;
+      opp.Introducer_new__c = intro_acc.Id;
+      opp.Introducer_contact__c = con.Id;
+      opp.closedate = system.today() + 7;
+      opp.name = 'test awaiting documents #' + idx;
+      opp.RecordTypeId = fundingSearchRecordTypeId;
+      opp.stagename = (math.mod(idx, 2) == 0) ? 'Awaiting Documents' : 'Incomplete';
+      opp.SearchedAmount__c = 250000;
+      opps.add(opp);
+    }
+    
+    insert opps;
+  }
 
-	@isTest static void test_unsecuredFundingSearchAssignment()
-	{
-		Id fundingSearchRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Funding Search').getRecordTypeId();
-		Id fundingSpecialistProfileId = [select Id from Profile where Name='Capitalise Funding Specialist'].Id;
+  @isTest static void test_unsecuredFundingSearchAssignment()
+  {
+    Id fundingSearchRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get('Funding Search').getRecordTypeId();
+    Id fundingSpecialistProfileId = [select Id from Profile where Name='Capitalise Funding Specialist'].Id;
 
-		Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
-		Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
-		Introducer__c intro = [select Id, Name from Introducer__c where Name = 'Introducer Test' limit 1];
-		Account intro_acc = [select Id, Name from Account where Name='Introducer T#5' limit 1];
-		Account prev_intro = [select Id, Name from Account where Name='Introducer T#0' limit 1];
-		Account prev_intro1 = [select Id, Name from Account where Name='Introducer T#1' limit 1];
-		Account prev_business = [select Id, Name from Account where Name='Business T#1' limit 1];
-		List<User> funding_specialists = [select Id, isActive from User where ProfileId=:fundingSpecialistProfileId];
-		List<Id> funding_specialist_ids = new List<Id>();
-		
-		for(user a_user : funding_specialists)
+    Contact con = [select Id, LastName from Contact where LastName = 'test contact' limit 1];
+    Contact con1 = [select Id, LastName from Contact where LastName = 'test contact 1' limit 1];
+    Introducer__c intro = [select Id, Name from Introducer__c where Name = 'Introducer Test' limit 1];
+    Account intro_acc = [select Id, Name from Account where Name='Introducer T#5' limit 1];
+    Account prev_intro = [select Id, Name from Account where Name='Introducer T#0' limit 1];
+    Account prev_intro1 = [select Id, Name from Account where Name='Introducer T#1' limit 1];
+    Account prev_business = [select Id, Name from Account where Name='Business T#1' limit 1];
+    List<User> funding_specialists = [select Id, isActive from User where ProfileId=:fundingSpecialistProfileId];
+    List<Id> funding_specialist_ids = new List<Id>();
+    
+    for(user a_user : funding_specialists)
             funding_specialist_ids.add(a_user.Id);
 
-		Map<Id, Map<String, Integer>> specialists_stages_count_map = new Map<Id, Map<String, Integer>>();
+    Map<Id, Map<String, Integer>> specialists_stages_count_map = new Map<Id, Map<String, Integer>>();
         for(AggregateResult item : [select Count(Id), StageName, Funding_Specialist__c From Opportunity Where Funding_Specialist__c != null and Funding_Specialist__r.ProfileId=:fundingSpecialistProfileId and RecordTypeId=:fundingSearchRecordTypeId and StageName In ('Incomplete', 'Awaiting Client Contact', 'Awaiting Documents')  Group By Funding_Specialist__c, StageName, RecordTypeId])
         {
             Id specialist = (Id)item.get('Funding_Specialist__c');
@@ -369,112 +373,112 @@ private class rsOpportunityChangeContactStage_Test {
                 }
             }
         }
-		system.debug(introducers_specialist_recent);
+    system.debug(introducers_specialist_recent);
 
-		Map<Id, Id> business_specialist_recent = new Map<Id, Id>();
+    Map<Id, Id> business_specialist_recent = new Map<Id, Id>();
         for(AggregateResult item : [select Id, DAY_ONLY(LastModifiedDate), AccountId, Funding_Specialist__c from Opportunity where Funding_Specialist__r.ProfileId=:fundingSpecialistProfileId and AccountId != null and RecordTypeId=:fundingSearchRecordTypeId Group By AccountId, Funding_Specialist__c, Id, DAY_ONLY(LastModifiedDate) order by DAY_ONLY(LastModifiedDate) desc])
         {
             Id business_id = (Id)item.get('AccountId');
             Id specialist = (Id)item.get('Funding_Specialist__c');
             if(funding_specialist_ids.contains(specialist) && !business_specialist_recent.containsKey(business_id))
                 business_specialist_recent.put(business_id, specialist);
-		}
-		system.debug(business_specialist_recent);
+    }
+    system.debug(business_specialist_recent);
 
-		opportunity opp = new opportunity();
-		opp.Introducer_new__c = intro_acc.Id;
-		opp.Introducer_contact__c = con.id;
-		opp.closedate = system.today() + 7;
-		opp.name = 'assignment test diva';
-		opp.SearchedAmount__c = 60000;
+    opportunity opp = new opportunity();
+    opp.Introducer_new__c = intro_acc.Id;
+    opp.Introducer_contact__c = con.id;
+    opp.closedate = system.today() + 7;
+    opp.name = 'assignment test diva';
+    opp.SearchedAmount__c = 60000;
         opp.RecordTypeId = fundingSearchRecordTypeId;
-		opp.stagename = 'Incomplete';
-		
-		Opportunity opp1 = new Opportunity();
-		opp1.Introducer_new__c = prev_intro.Id;
-		opp1.Introducer_contact__c = con.id;
-		opp1.closedate = system.today() + 7;
-		opp1.name = 'test diva partner';
-		opp1.SearchedAmount__c = 70000;
-    	opp1.RecordTypeId = fundingSearchRecordTypeId;
-		opp1.stagename = 'Incomplete';
+    opp.stagename = 'Incomplete';
+    
+    Opportunity opp1 = new Opportunity();
+    opp1.Introducer_new__c = prev_intro.Id;
+    opp1.Introducer_contact__c = con.id;
+    opp1.closedate = system.today() + 7;
+    opp1.name = 'test diva partner';
+    opp1.SearchedAmount__c = 70000;
+      opp1.RecordTypeId = fundingSearchRecordTypeId;
+    opp1.stagename = 'Incomplete';
 
-		Id partner_specialist = introducers_specialist_recent.get(prev_intro.Id).get(con.Id);
+    Id partner_specialist = introducers_specialist_recent.get(prev_intro.Id).get(con.Id);
 
-		Opportunity opp2 = new Opportunity();
-		opp2.Introducer_new__c = prev_intro1.Id;
-		opp2.Introducer_contact__c = con1.id;
-		opp2.closedate = system.today() + 7;
-		opp2.name = 'test diva chaperone';
-		opp2.SearchedAmount__c = 54321;
+    Opportunity opp2 = new Opportunity();
+    opp2.Introducer_new__c = prev_intro1.Id;
+    opp2.Introducer_contact__c = con1.id;
+    opp2.closedate = system.today() + 7;
+    opp2.name = 'test diva chaperone';
+    opp2.SearchedAmount__c = 54321;
         opp2.RecordTypeId = fundingSearchRecordTypeId;
-		opp2.stagename = 'Incomplete';
+    opp2.stagename = 'Incomplete';
 
-		Id chaperone_specialist = introducers_specialist_recent.get(prev_intro1.Id).get(con1.Id);
+    Id chaperone_specialist = introducers_specialist_recent.get(prev_intro1.Id).get(con1.Id);
 
-		Opportunity opp3 = new Opportunity();
-		opp3.Introducer_new__c = prev_intro1.Id;
-		opp3.Introducer_contact__c = con.id;
-		opp3.closedate = system.today() + 7;
-		opp3.name = 'test diva driver';
-		opp3.SearchedAmount__c = 54321;
+    Opportunity opp3 = new Opportunity();
+    opp3.Introducer_new__c = prev_intro1.Id;
+    opp3.Introducer_contact__c = con.id;
+    opp3.closedate = system.today() + 7;
+    opp3.name = 'test diva driver';
+    opp3.SearchedAmount__c = 54321;
         opp3.RecordTypeId = fundingSearchRecordTypeId;
-		opp3.stagename = 'Incomplete';
+    opp3.stagename = 'Incomplete';
 
-		Id driver_specialist = introducers_specialist_recent.get(prev_intro1.Id).get(con1.Id);
+    Id driver_specialist = introducers_specialist_recent.get(prev_intro1.Id).get(con1.Id);
 
-		Opportunity opp4 = new Opportunity();
-		opp4.Introducer_new__c = prev_intro1.Id;
-		opp4.Introducer_contact__c = con.id;
-		opp4.closedate = system.today() + 7;
-		opp4.AccountId = prev_business.Id;
-		opp4.name = 'test diva business';
-		opp4.SearchedAmount__c = 54321;
+    Opportunity opp4 = new Opportunity();
+    opp4.Introducer_new__c = prev_intro1.Id;
+    opp4.Introducer_contact__c = con.id;
+    opp4.closedate = system.today() + 7;
+    opp4.AccountId = prev_business.Id;
+    opp4.name = 'test diva business';
+    opp4.SearchedAmount__c = 54321;
         opp4.RecordTypeId = fundingSearchRecordTypeId;
-		opp4.stagename = 'Incomplete';
+    opp4.stagename = 'Incomplete';
 
-		Id business_specialist = business_specialist_recent.get(prev_business.Id);
-		
-		List<String> test_opps = new List<String>();
-		test_opps.add(opp.Name);
-		test_opps.add(opp1.Name);
-		test_opps.add(opp2.Name);
-		test_opps.add(opp3.Name);
-		test_opps.add(opp4.Name);
+    Id business_specialist = business_specialist_recent.get(prev_business.Id);
+    
+    List<String> test_opps = new List<String>();
+    test_opps.add(opp.Name);
+    test_opps.add(opp1.Name);
+    test_opps.add(opp2.Name);
+    test_opps.add(opp3.Name);
+    test_opps.add(opp4.Name);
 
-		Id chosenId = rsOpportunityChangeContactStageHelper.Selectspecialist(specialists_stages_count_map, funding_specialists);
+    Id chosenId = rsOpportunityChangeContactStageHelper.Selectspecialist(specialists_stages_count_map, funding_specialists);
 
-		List<Opportunity> test_inserts = new List<Opportunity>();
-		test_inserts.add(opp);
-		test_inserts.add(opp1);
-		test_inserts.add(opp2);
-		test_inserts.add(opp3);
-		test_inserts.add(opp4);
+    List<Opportunity> test_inserts = new List<Opportunity>();
+    test_inserts.add(opp);
+    test_inserts.add(opp1);
+    test_inserts.add(opp2);
+    test_inserts.add(opp3);
+    test_inserts.add(opp4);
 
-		Test.startTest();
-		Test.setMock(HttpCalloutMock.class, new CapAPPMock_Success());
-		insert test_inserts;
-		Test.stopTest();
+    Test.startTest();
+    Test.setMock(HttpCalloutMock.class, new CapAPPMock_Success());
+    insert test_inserts;
+    Test.stopTest();
 
-		for(Opportunity oppRecord: [select Id, Name, Funding_Specialist__c from Opportunity where Name in :test_opps])
-		{
-			switch on oppRecord.Name {
-				when 'assignment test diva' {
-					system.AssertEquals(oppRecord.Funding_Specialist__c, chosenId);
-				}
-				when 'test diva partner' {
-					system.AssertEquals(oppRecord.Funding_Specialist__c, partner_specialist);
-				}
-				when 'test diva chaperone' {
-					system.AssertEquals(oppRecord.Funding_Specialist__c, chaperone_specialist);
-				}
-				when 'test diva driver' {
-					system.AssertEquals(oppRecord.Funding_Specialist__c, driver_specialist);
-				}
-				when 'test diva business' {
-					system.AssertEquals(oppRecord.Funding_Specialist__c, business_specialist);
-				}
-			}
-		}
-	}
+    for(Opportunity oppRecord: [select Id, Name, Funding_Specialist__c from Opportunity where Name in :test_opps])
+    {
+      switch on oppRecord.Name {
+        when 'assignment test diva' {
+          system.AssertEquals(oppRecord.Funding_Specialist__c, chosenId);
+        }
+        when 'test diva partner' {
+          system.AssertEquals(oppRecord.Funding_Specialist__c, partner_specialist);
+        }
+        when 'test diva chaperone' {
+          system.AssertEquals(oppRecord.Funding_Specialist__c, chaperone_specialist);
+        }
+        when 'test diva driver' {
+          system.AssertEquals(oppRecord.Funding_Specialist__c, driver_specialist);
+        }
+        when 'test diva business' {
+          system.AssertEquals(oppRecord.Funding_Specialist__c, business_specialist);
+        }
+      }
+    }
+  }
 }

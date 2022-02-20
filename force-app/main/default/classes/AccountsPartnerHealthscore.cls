@@ -336,6 +336,9 @@ public with sharing class AccountsPartnerHealthscore {
         List<Account> introducersZone2 = new List<Account>();
         List<Account> introducersZone3 = new List<Account>();
         List<Account> introducersZone4 = new List<Account>();
+        List<Account> introducersZone5 = new List<Account>();
+        List<Account> introducersZone6 = new List<Account>();
+        List<Account> introducersZone7 = new List<Account>();
         List<Account> introducers = new List<Account>();
 
         for(Account acc : [select Id, Zone__c, Monetary_Secured__c, Monetary_Unsecured__c, Monetary_Key_Secured__c, Monetary_Key_Unsecured__c, Recency__c, Recent_Searches__c, Penetration_Key__c, Penetration__c, Managed_Clients_Connected__c, Attachment__c, Conversion_Rate_Key__c, Conversion_Rate__c, Engagement_Key__c, Engagement__c, Spread_Key__c, Spread__c, Number_of_Clients__c from Account where RecordTypeId=:introducerRecordTypeId])
@@ -352,17 +355,32 @@ public with sharing class AccountsPartnerHealthscore {
             else if(Acc.Zone__c == 4) {
                 introducersZone4.add(acc);
             }
+            else if(Acc.Zone__c == 5) {
+                introducersZone5.add(acc);
+            }
+            else if(Acc.Zone__c == 6) {
+                introducersZone6.add(acc);
+            }
+            else if(Acc.Zone__c == 7) {
+                introducersZone7.add(acc);
+            }
         }
 
         introducersZone1 = ComputeConversionRate(introducersZone1);
         introducersZone2 = ComputeConversionRate(introducersZone2);
         introducersZone3 = ComputeConversionRate(introducersZone3);
         introducersZone4 = ComputeConversionRate(introducersZone4);
+        introducersZone5 = ComputeConversionRate(introducersZone5);
+        introducersZone6 = ComputeConversionRate(introducersZone6);
+        introducersZone7 = ComputeConversionRate(introducersZone7);
 
         introducers.addAll(introducersZone1);
         introducers.addAll(introducersZone2);
         introducers.addAll(introducersZone3);
         introducers.addAll(introducersZone4);
+        introducers.addAll(introducersZone5);
+        introducers.addAll(introducersZone6);
+        introducers.addAll(introducersZone7);
 
         return introducers;
     }
@@ -374,6 +392,9 @@ public with sharing class AccountsPartnerHealthscore {
         List<Account> introducersZone2 = new List<Account>();
         List<Account> introducersZone3 = new List<Account>();
         List<Account> introducersZone4 = new List<Account>();
+        List<Account> introducersZone5 = new List<Account>();
+        List<Account> introducersZone6 = new List<Account>();
+        List<Account> introducersZone7 = new List<Account>();
         List<Account> introducers = new List<Account>();
 
         for(Account acc : [select Id, Zone__c, Monetary_Secured__c, Monetary_Unsecured__c, Monetary_Key_Secured__c, Monetary_Key_Unsecured__c, Recency__c, Recent_Searches__c, Penetration_Key__c, Penetration__c, Managed_Clients_Connected__c, Attachment__c, Conversion_Rate_Key__c, Conversion_Rate__c, Engagement_Key__c, Engagement__c, Spread_Key__c, Spread__c, Number_of_Clients__c from Account where RecordTypeId=:introducerRecordTypeId])
@@ -390,17 +411,32 @@ public with sharing class AccountsPartnerHealthscore {
             else if(Acc.Zone__c == 4) {
                 introducersZone4.add(acc);
             }
+            else if(Acc.Zone__c == 5) {
+                introducersZone5.add(acc);
+            }
+            else if(Acc.Zone__c == 6) {
+                introducersZone6.add(acc);
+            }
+            else if(Acc.Zone__c == 7) {
+                introducersZone7.add(acc);
+            }
         }
 
-        introducersZone1 = ComputeRecency(introducersZone1);
-        introducersZone2 = ComputeRecency(introducersZone2);
-        introducersZone3 = ComputeRecency(introducersZone3);
-        introducersZone4 = ComputeRecency(introducersZone4);
+        introducersZone1 = ComputeConversionRate(introducersZone1);
+        introducersZone2 = ComputeConversionRate(introducersZone2);
+        introducersZone3 = ComputeConversionRate(introducersZone3);
+        introducersZone4 = ComputeConversionRate(introducersZone4);
+        introducersZone5 = ComputeConversionRate(introducersZone5);
+        introducersZone6 = ComputeConversionRate(introducersZone6);
+        introducersZone7 = ComputeConversionRate(introducersZone7);
 
         introducers.addAll(introducersZone1);
         introducers.addAll(introducersZone2);
         introducers.addAll(introducersZone3);
         introducers.addAll(introducersZone4);
+        //introducers.addAll(introducersZone5);
+        //introducers.addAll(introducersZone6);
+        //introducers.addAll(introducersZone7);
 
         return introducers;
     }
@@ -412,6 +448,9 @@ public with sharing class AccountsPartnerHealthscore {
         List<Account> introducersZone2 = new List<Account>();
         List<Account> introducersZone3 = new List<Account>();
         List<Account> introducersZone4 = new List<Account>();
+        List<Account> introducersZone5 = new List<Account>();
+        List<Account> introducersZone6 = new List<Account>();
+        List<Account> introducersZone7 = new List<Account>();
         List<Account> introducers = new List<Account>();
         system.debug('Zone Monetary Computations');
 
@@ -429,10 +468,18 @@ public with sharing class AccountsPartnerHealthscore {
             else if(Acc.Zone__c == 4) {
                 introducersZone4.add(acc);
             }
+            else if(Acc.Zone__c == 5) {
+                introducersZone4.add(acc);
+            }
+            else if(Acc.Zone__c == 6) {
+                introducersZone4.add(acc);
+            }
+            else if(Acc.Zone__c == 7) {
+                introducersZone4.add(acc);
+            }
         }
 
         system.debug('Zone 1: ');
-
         introducersZone1 = (introducersZone1.size() != 0) ? ComputeMonetary(introducersZone1) : introducersZone1;
         system.debug('Zone 2: ');
         introducersZone2 = (introducersZone2.size() != 0) ? ComputeMonetary(introducersZone2) : introducersZone2;
@@ -440,11 +487,20 @@ public with sharing class AccountsPartnerHealthscore {
         introducersZone3 = (introducersZone3.size() != 0) ? ComputeMonetary(introducersZone3) : introducersZone3;
         system.debug('Zone 4: ');
         introducersZone4 = (introducersZone4.size() != 0) ? ComputeMonetary(introducersZone4) : introducersZone4;
+        system.debug('Zone 5: ');
+        introducersZone5 = (introducersZone5.size() != 0) ? ComputeMonetary(introducersZone5) : introducersZone5;
+        system.debug('Zone 6: ');
+        introducersZone6 = (introducersZone6.size() != 0) ? ComputeMonetary(introducersZone6) : introducersZone6;
+        system.debug('Zone 7: ');
+        introducersZone7 = (introducersZone7.size() != 0) ? ComputeMonetary(introducersZone7) : introducersZone7;
 
         introducers.addAll(introducersZone1);
         introducers.addAll(introducersZone2);
         introducers.addAll(introducersZone3);
         introducers.addAll(introducersZone4);
+        introducers.addAll(introducersZone5);
+        introducers.addAll(introducersZone6);
+        introducers.addAll(introducersZone7);
 
         return introducers;
     }
@@ -559,9 +615,9 @@ public with sharing class AccountsPartnerHealthscore {
         Double zoneFactor = 0.1;
         for(Account acc : accounts)
         {
-            if(acc.Zone__c == 4) zoneFactor = 0.1;
-            else if(acc.Zone__c == 3) zoneFactor = 0.05;
-            else if(acc.Zone__c == 2 || acc.Zone__c == 1) zoneFactor = 0.01;
+            if(acc.Zone__c == 7) zoneFactor = 0.1;
+            else if(acc.Zone__c == 5 && acc.Zone__c == 6) zoneFactor = 0.05;
+            else if(acc.Zone__c == 4 || acc.Zone__c == 3 || acc.Zone__c == 2 || acc.Zone__c == 1) zoneFactor = 0.01;
 
             Double cutOff = (acc.Number_of_Clients__c != null) ? acc.Number_of_Clients__c * zoneFactor : 0;
             Double attachment = (cutOff != 0) ? ((acc.Managed_Clients_Connected__c != null) ? acc.Managed_Clients_Connected__c / cutOff : 0) : 1;

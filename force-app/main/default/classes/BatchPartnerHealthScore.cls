@@ -1,9 +1,10 @@
 global class BatchPartnerHealthScore implements Database.Batchable<sObject> {
+    
     String query;
     Boolean quaterly;
     global BatchPartnerHealthScore() {
         Id introducerRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Introducer').getRecordTypeId();
-        quaterly = false;
+        //quaterly = true;
         query = 'select Id, Zone__c, Monetary_Secured__c, Monetary_Unsecured__c, Monetary_Key_Secured__c, Monetary_Key_Unsecured__c, Recency__c, Recent_Searches__c, Penetration_Key__c, Penetration__c, Managed_Clients_Connected__c, Attachment__c, Conversion_Rate_Key__c, Conversion_Rate__c, Engagement_Key__c, Engagement__c, Spread_Key__c, Spread__c, Number_of_Clients__c from Account where RecordTypeId=\'' + introducerRecordTypeId + '\'';
     }
 
@@ -25,11 +26,17 @@ global class BatchPartnerHealthScore implements Database.Batchable<sObject> {
         List<AggregateResult> recentSearchesZone2 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 2];
         List<AggregateResult> recentSearchesZone3 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 3];
         List<AggregateResult> recentSearchesZone4 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 4];
+        List<AggregateResult> recentSearchesZone5 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 5];
+        List<AggregateResult> recentSearchesZone6 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 6];
+        List<AggregateResult> recentSearchesZone7 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 7];
 
         List<AggregateResult> recentPaidSearchesZone1 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where StageName = 'Paid Out' and DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 1];
         List<AggregateResult> recentPaidSearchesZone2 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where StageName = 'Paid Out' and DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 2];
         List<AggregateResult> recentPaidSearchesZone3 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where StageName = 'Paid Out' and DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 3];
         List<AggregateResult> recentPaidSearchesZone4 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where StageName = 'Paid Out' and DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 4];
+        List<AggregateResult> recentPaidSearchesZone5 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where StageName = 'Paid Out' and DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 5];
+        List<AggregateResult> recentPaidSearchesZone6 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where StageName = 'Paid Out' and DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 6];
+        List<AggregateResult> recentPaidSearchesZone7 = [select Count(Id) recent, Count_Distinct(Introducer_new__c) intros from Opportunity where StageName = 'Paid Out' and DAY_ONLY(CreatedDate) = LAST_N_DAYS:90 and RecordTypeId in :fundingSearchesTypesIds and Introducer_Zone__c = 7];
 
         Id introducerRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Introducer').getRecordTypeId();
 
@@ -37,6 +44,15 @@ global class BatchPartnerHealthScore implements Database.Batchable<sObject> {
         List<AggregateResult> monetaryAggregate2 = [select AVG(Monetary_Key_Unsecured__c) monetaryUD, AVG(Monetary_Key_Secured__c) monetarySD from Account where Zone__c=2 and RecordTypeId = :introducerRecordTypeId];
         List<AggregateResult> monetaryAggregate3 = [select AVG(Monetary_Key_Unsecured__c) monetaryUD, AVG(Monetary_Key_Secured__c) monetarySD from Account where Zone__c=3 and RecordTypeId = :introducerRecordTypeId];
         List<AggregateResult> monetaryAggregate4 = [select AVG(Monetary_Key_Unsecured__c) monetaryUD, AVG(Monetary_Key_Secured__c) monetarySD from Account where Zone__c=4 and RecordTypeId = :introducerRecordTypeId];
+        List<AggregateResult> monetaryAggregate5 = [select AVG(Monetary_Key_Unsecured__c) monetaryUD, AVG(Monetary_Key_Secured__c) monetarySD from Account where Zone__c=5 and RecordTypeId = :introducerRecordTypeId];
+        List<AggregateResult> monetaryAggregate6 = [select AVG(Monetary_Key_Unsecured__c) monetaryUD, AVG(Monetary_Key_Secured__c) monetarySD from Account where Zone__c=6 and RecordTypeId = :introducerRecordTypeId];
+        List<AggregateResult> monetaryAggregate7 = [select AVG(Monetary_Key_Unsecured__c) monetaryUD, AVG(Monetary_Key_Secured__c) monetarySD from Account where Zone__c=7 and RecordTypeId = :introducerRecordTypeId];
+
+        List<AccountHealthScoreSorter> sortedEngagementAccounts = new List<AccountHealthScoreSorter>();
+        List<AccountHealthScoreSorter> sortedSpreadAccounts = new List<AccountHealthScoreSorter>();
+        Map<Id, Account> accMap = new Map<Id, Account>();
+
+        Integer quintile = scope.size() / 5;
 
         for(Account acc : scope)
         {
@@ -65,7 +81,7 @@ global class BatchPartnerHealthScore implements Database.Batchable<sObject> {
                     intros = (Integer)recentSearchesZone3[0].get('intros');
                     recentSearches = (Integer) recentSearchesZone3[0].get('recent');
                     recentPaidSearches = (Integer) recentPaidSearchesZone3[0].get('recent');
-                    zoneFactor = 0.05;
+                    zoneFactor = 0.01;
                     monetarySD = (Decimal)monetaryAggregate3[0].get('monetarySD');
                     monetaryUD = (Decimal)monetaryAggregate3[0].get('monetaryUD');
                 }
@@ -73,31 +89,53 @@ global class BatchPartnerHealthScore implements Database.Batchable<sObject> {
                     intros = (Integer)recentSearchesZone4[0].get('intros');
                     recentSearches = (Integer) recentSearchesZone4[0].get('recent');
                     recentPaidSearches = (Integer) recentPaidSearchesZone4[0].get('recent');
-                    zoneFactor = 0.1;
+                    zoneFactor = 0.01;
                     monetarySD = (Decimal)monetaryAggregate4[0].get('monetarySD');
                     monetaryUD = (Decimal)monetaryAggregate4[0].get('monetaryUD');
                 }
+                when 5 {
+                    intros = (Integer)recentSearchesZone5[0].get('intros');
+                    recentSearches = (Integer) recentSearchesZone5[0].get('recent');
+                    recentPaidSearches = (Integer) recentPaidSearchesZone5[0].get('recent');
+                    zoneFactor = 0.05;
+                    monetarySD = (Decimal)monetaryAggregate5[0].get('monetarySD');
+                    monetaryUD = (Decimal)monetaryAggregate5[0].get('monetaryUD');
+                }
+                when 6 {
+                    intros = (Integer)recentSearchesZone6[0].get('intros');
+                    recentSearches = (Integer) recentSearchesZone6[0].get('recent');
+                    recentPaidSearches = (Integer) recentPaidSearchesZone6[0].get('recent');
+                    zoneFactor = 0.05;
+                    monetarySD = (Decimal)monetaryAggregate6[0].get('monetarySD');
+                    monetaryUD = (Decimal)monetaryAggregate6[0].get('monetaryUD');
+                }
+                when 7 {
+                    intros = (Integer)recentSearchesZone7[0].get('intros');
+                    recentSearches = (Integer) recentSearchesZone7[0].get('recent');
+                    recentPaidSearches = (Integer) recentPaidSearchesZone7[0].get('recent');
+                    zoneFactor = 0.1;
+                    monetarySD = (Decimal)monetaryAggregate7[0].get('monetarySD');
+                    monetaryUD = (Decimal)monetaryAggregate7[0].get('monetaryUD');
+                }
             }
 
-            if(quaterly) {
-                recencyZone = (intros != 0) ? recentSearches / intros : recentSearches;
-                recencyKey = (acc.Recent_Searches__c != null) ? ((recencyZone != 0) ? 1.0 * acc.Recent_Searches__c / recencyZone : 0) : 0;
-                Double companyConversionRate = (recentSearches != 0) ? 1.0 * recentPaidSearches / recentSearches : 0;
+            recencyZone = (intros != 0) ? recentSearches / intros : recentSearches;
+            recencyKey = (acc.Recent_Searches__c != null) ? ((recencyZone != 0) ? 1.0 * acc.Recent_Searches__c / recencyZone : 0) : 0;
+            Double companyConversionRate = (recentSearches != 0) ? 1.0 * recentPaidSearches / recentSearches : 0;
 
-                Double rateKey = (acc.Conversion_Rate_Key__c != null) ? ((companyConversionRate != 0) ? acc.Conversion_Rate_Key__c / companyConversionRate : 0) : 0;
+            Double rateKey = (acc.Conversion_Rate_Key__c != null) ? ((companyConversionRate != 0) ? acc.Conversion_Rate_Key__c / companyConversionRate : 0) : 0;
 
-                if(rateKey > 0.8) acc.Conversion_Rate__c = 5;
-                else if(rateKey > 0.6) acc.Conversion_Rate__c = 4;
-                else if(rateKey > 0.4) acc.Conversion_Rate__c = 3;
-                else if(rateKey > 0.2) acc.Conversion_Rate__c = 2;
-                else acc.Conversion_Rate__c = 1;
+            if(rateKey > 0.8) acc.Conversion_Rate__c = 5;
+            else if(rateKey > 0.6) acc.Conversion_Rate__c = 4;
+            else if(rateKey > 0.4) acc.Conversion_Rate__c = 3;
+            else if(rateKey > 0.2) acc.Conversion_Rate__c = 2;
+            else acc.Conversion_Rate__c = 1;
                 
-                if(recencyKey > 0.8) acc.Recency__c = 5;
-                else if(recencyKey > 0.6) acc.Recency__c = 4;
-                else if(recencyKey > 0.4) acc.Recency__c = 3;
-                else if(recencyKey > 0.2) acc.Recency__c = 2;
-                else acc.Recency__c = 1;
-            }
+            if(recencyKey > 0.8) acc.Recency__c = 5;
+            else if(recencyKey > 0.6) acc.Recency__c = 4;
+            else if(recencyKey > 0.4) acc.Recency__c = 3;
+            else if(recencyKey > 0.2) acc.Recency__c = 2;
+            else acc.Recency__c = 1;
 
             if(acc.Penetration_Key__c == null) acc.Penetration__c = 1;
             else if(acc.Penetration_Key__c > 0.8) acc.Penetration__c = 5;
@@ -129,6 +167,81 @@ global class BatchPartnerHealthScore implements Database.Batchable<sObject> {
             else if(monetaryIndicatorU > 0.4) acc.Monetary_Unsecured__c = 3;
             else if(monetaryIndicatorU > 0.2) acc.Monetary_Unsecured__c = 2;
             else acc.Monetary_Unsecured__c = 1;
+
+            sortedEngagementAccounts.add(new AccountHealthScoreSorter(acc, 'Engagement'));
+            sortedSpreadAccounts.add(new AccountHealthScoreSorter(acc, 'Spread'));
+            accMap.put(acc.Id, acc);
+        }
+
+        sortedEngagementAccounts.sort();
+        sortedSpreadAccounts.sort();
+
+        for(Integer idx = 0; idx < sortedEngagementAccounts.size(); idx++)
+        {
+            if(accMap.get(sortedEngagementAccounts[idx].acc.Id).Engagement_Key__c != 0)
+            {
+                if(quintile == 0)
+                {
+                    accMap.get(sortedEngagementAccounts[idx].acc.Id).Engagement__c = idx + 1;
+                }
+                else if(idx < quintile)
+                {
+                    accMap.get(sortedEngagementAccounts[idx].acc.Id).Engagement__c = 1;
+                }
+                else if(idx < 2 * quintile)
+                {   
+                    accMap.get(sortedEngagementAccounts[idx].acc.Id).Engagement__c = 2;
+                }
+                else if(idx < 3 * quintile)
+                {
+                    accMap.get(sortedEngagementAccounts[idx].acc.Id).Engagement__c = 3;
+                }
+                else if(idx < 4 * quintile)
+                {
+                    accMap.get(sortedEngagementAccounts[idx].acc.Id).Engagement__c = 4;
+                }
+                else
+                {
+                    accMap.get(sortedEngagementAccounts[idx].acc.Id).Engagement__c = 5;
+                }
+            }
+        }
+
+        for(Integer idx = 0; idx < sortedSpreadAccounts.size(); idx++)
+        {
+            if(accMap.get(sortedSpreadAccounts[idx].acc.Id).Spread_Key__c != 0)
+            {
+                if(quintile == 0)
+                {
+                    accMap.get(sortedSpreadAccounts[idx].acc.Id).Spread__c = idx + 1;
+                }
+                else if(idx < quintile)
+                {
+                    accMap.get(sortedSpreadAccounts[idx].acc.Id).Spread__c = 1;
+                }
+                else if(idx < 2 * quintile)
+                {
+                    accMap.get(sortedSpreadAccounts[idx].acc.Id).Spread__c = 2;
+                }
+                else if(idx < 3 * quintile)
+                {
+                    accMap.get(sortedSpreadAccounts[idx].acc.Id).Spread__c = 3;
+                }
+                else if(idx < 4 * quintile)
+                {
+                    accMap.get(sortedSpreadAccounts[idx].acc.Id).Spread__c = 4;
+                }
+                else
+                {
+                    accMap.get(sortedSpreadAccounts[idx].acc.Id).Spread__c = 5;
+                }
+            }
+        }
+
+        for(Account acc : scope)
+        {
+            acc.Engagement__c = (accMap.containsKey(acc.Id)) ? accMap.get(acc.Id).Engagement__c : 1;
+            acc.Spread__c = (accMap.containsKey(acc.Id)) ? accMap.get(acc.Id).Spread__c : 1;
         }
 
         Database.SaveResult[] dbsr = Database.update(scope, false);
